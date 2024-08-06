@@ -36,6 +36,6 @@ public class Player {
     }
 
     public Optional<Card> getCardFromHand(Card topCard) {
-        return playerCards.ChooseCardToPlay(topCard);
+        return playerCards.chooseCardToPlay(topCard);
     }
 }

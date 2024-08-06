@@ -34,7 +34,7 @@ public class PlayerCards {
         }
     }
 
-    public Optional<Card> ChooseCardToPlay(Card topCard){
+    public Optional<Card> chooseCardToPlay(Card topCard){
         if(cards.isEmpty()) {
             throw new IllegalArgumentException("No cards available to play");
         }

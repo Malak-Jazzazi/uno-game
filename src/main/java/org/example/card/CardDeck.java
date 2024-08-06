@@ -4,14 +4,23 @@ import java.util.Collections;
 import java.util.Stack;
 
 public class CardDeck {
+    private static CardDeck instance;
     private Stack<Card> cards;
     private Stack<Card> discardedCards;
 
-    public CardDeck() {
+    private CardDeck() {
         cards = new Stack<>();
         discardedCards = new Stack<>();
         initializeDeck();
         shuffle(cards);
+    }
+
+
+    public static CardDeck getInstance() {
+        if (instance == null) {
+            instance = new CardDeck();
+        }
+        return instance;
     }
 
     private void initializeDeck() {
