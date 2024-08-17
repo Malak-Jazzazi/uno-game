@@ -5,7 +5,7 @@ import java.util.Objects;
 public class NumberedCard extends AbstractCard {
     private int value;
 
-    public NumberedCard(CardColor cardColor, int number) {
+    public NumberedCard(CardColor cardColor , int number) {
         super(cardColor, CardType.NUMBER);
         this.value = number;
     }

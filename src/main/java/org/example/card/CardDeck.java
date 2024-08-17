@@ -1,5 +1,10 @@
 package org.example.card;
 
+import org.example.factory.ActionCardFactory;
+import org.example.factory.CardFactory;
+import org.example.factory.NumberedCardFactory;
+import org.example.factory.WildCardFactory;
+
 import java.util.Collections;
 import java.util.Stack;
 
@@ -47,31 +52,36 @@ public final class CardDeck {
     }
 
     private void addNumberedCard(CardColor color) {
+        CardFactory numberedCardFactory = new NumberedCardFactory();
         cards.push(new NumberedCard(color, 0));
         for (int i = 1; i <= 9; i++) {
-            cards.push(new NumberedCard(color, i));
-            cards.push(new NumberedCard(color, i));
+            cards.push(numberedCardFactory.createCard(color, CardType.NUMBER, i));
+            cards.push(numberedCardFactory.createCard(color, CardType.NUMBER, i));
         }
     }
 
     private void addActionCard(CardColor color) {
-        cards.push(new ActionCard(color, CardType.REVERSE));
-        cards.push(new ActionCard(color, CardType.REVERSE));
-        cards.push(new ActionCard(color, CardType.DRAW_TWO));
-        cards.push(new ActionCard(color, CardType.DRAW_TWO));
-        cards.push(new ActionCard(color, CardType.SKIP));
-        cards.push(new ActionCard(color, CardType.SKIP));
+        CardFactory actionCardFactory = new ActionCardFactory();
+
+        cards.push(actionCardFactory.createCard(color, CardType.REVERSE, 0));
+        cards.push(actionCardFactory.createCard(color, CardType.REVERSE, 0));
+        cards.push(actionCardFactory.createCard(color, CardType.DRAW_TWO, 0));
+        cards.push(actionCardFactory.createCard(color, CardType.DRAW_TWO, 0));
+        cards.push(actionCardFactory.createCard(color, CardType.SKIP, 0));
+        cards.push(actionCardFactory.createCard(color, CardType.SKIP, 0));
     }
 
     private void addWildCard() {
-        cards.push(new WildCard(CardType.WILD_COLOR));
-        cards.push(new WildCard(CardType.WILD_COLOR));
-        cards.push(new WildCard(CardType.WILD_COLOR));
-        cards.push(new WildCard(CardType.WILD_COLOR));
-        cards.push(new WildCard(CardType.WILD_DRAW_FOUR));
-        cards.push(new WildCard(CardType.WILD_DRAW_FOUR));
-        cards.push(new WildCard(CardType.WILD_DRAW_FOUR));
-        cards.push(new WildCard(CardType.WILD_DRAW_FOUR));
+        CardFactory wildCardFactory = new WildCardFactory();
+
+        cards.push(wildCardFactory.createCard(CardColor.WILD, CardType.WILD_COLOR, 0));
+        cards.push(wildCardFactory.createCard(CardColor.WILD, CardType.WILD_COLOR, 0));
+        cards.push(wildCardFactory.createCard(CardColor.WILD, CardType.WILD_COLOR, 0));
+        cards.push(wildCardFactory.createCard(CardColor.WILD, CardType.WILD_COLOR, 0));
+        cards.push(wildCardFactory.createCard(CardColor.WILD, CardType.WILD_DRAW_FOUR, 0));
+        cards.push(wildCardFactory.createCard(CardColor.WILD, CardType.WILD_DRAW_FOUR, 0));
+        cards.push(wildCardFactory.createCard(CardColor.WILD, CardType.WILD_DRAW_FOUR, 0));
+        cards.push(wildCardFactory.createCard(CardColor.WILD, CardType.WILD_DRAW_FOUR, 0));
     }
 
     private void shuffle(Stack<Card> cards) {
