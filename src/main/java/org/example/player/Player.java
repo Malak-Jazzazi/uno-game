@@ -11,10 +11,10 @@ public class Player {
     private final String name;
     private PlayerCards playerCards;
 
-    public Player(int id, String name, PlayerCards playerCards) {
+    public Player(int id, String name) {
         this.id = id;
         this.name = name;
-        this.playerCards = playerCards;
+        playerCards = new PlayerCards();
     }
 
     public int getId() {

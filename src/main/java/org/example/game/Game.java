@@ -3,18 +3,28 @@ package org.example.game;
 import org.example.card.*;
 import org.example.player.Player;
 import org.example.player.PlayerRound;
+import org.example.strategy.ActionCardStrategy;
+import org.example.strategy.CardPlayStrategy;
+import org.example.strategy.NumberedCardStrategy;
+import org.example.strategy.WildCardStrategy;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class Game {
     protected List<Player> players;
     protected CardDeck deck;
     protected PlayerRound playerRound;
-
+    protected Map<Class<? extends Card>, CardPlayStrategy> cardStrategies;
     public Game(List<Player> players) {
         this.players = players;
         this.deck = CardDeck.getInstance();
         this.playerRound = PlayerRound.getInstance(players);
+        cardStrategies = Map.of(
+                NumberedCard.class, new NumberedCardStrategy(),
+                ActionCard.class, new ActionCardStrategy(),
+                WildCard.class, new WildCardStrategy()
+        );
         initializeGame();
     }
 
@@ -42,7 +52,24 @@ public abstract class Game {
         }
     }
 
-    protected void advanceToNextPlayer() {
-        playerRound.next();
+    public void advanceToNextPlayer() {
+        playerRound.advanceToNextPlayer();
     }
+
+    public PlayerRound getPlayerRound() {
+        return playerRound;
+    }
+
+    public void setPlayerRound(PlayerRound playerRound) {
+        this.playerRound = playerRound;
+    }
+
+    public CardDeck getDeck() {
+        return deck;
+    }
+
+    public void setDeck(CardDeck deck) {
+        this.deck = deck;
+    }
+
 }

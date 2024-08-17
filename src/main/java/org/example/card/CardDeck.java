@@ -3,8 +3,8 @@ package org.example.card;
 import java.util.Collections;
 import java.util.Stack;
 
-public class CardDeck {
-    private static CardDeck instance;
+public final class CardDeck {
+    private static volatile CardDeck instance; // Volatile for thread-safety
     private Stack<Card> cards;
     private Stack<Card> discardedCards;
     private CardColor deckColor;
@@ -16,10 +16,13 @@ public class CardDeck {
         shuffle(cards);
     }
 
-
     public static CardDeck getInstance() {
         if (instance == null) {
-            instance = new CardDeck();
+            synchronized (CardDeck.class) { // Thread-safe initialization
+                if (instance == null) {
+                    instance = new CardDeck();
+                }
+            }
         }
         return instance;
     }
@@ -29,37 +32,35 @@ public class CardDeck {
     }
 
     public void setDeckColor(CardColor deckColor) {
-        System.out.println("Deck color is set to " + deckColor);
         this.deckColor = deckColor;
     }
 
     private void initializeDeck() {
-        for(CardColor color : CardColor.values()) {
-            if(color != CardColor.WILD){
+        for (CardColor color : CardColor.values()) {
+            if (color != CardColor.WILD) {
                 addNumberedCard(color);
                 addActionCard(color);
-            }else{
+            } else {
                 addWildCard();
             }
         }
     }
 
     private void addNumberedCard(CardColor color) {
-        cards.push(new NumberedCard(color , 0));
-        for(int i = 1 ; i <= 9 ; i++) {
-            cards.push(new NumberedCard(color , i));
-            cards.push(new NumberedCard(color , i));
+        cards.push(new NumberedCard(color, 0));
+        for (int i = 1; i <= 9; i++) {
+            cards.push(new NumberedCard(color, i));
+            cards.push(new NumberedCard(color, i));
         }
-
     }
 
     private void addActionCard(CardColor color) {
-        cards.push(new ActionCard(color , CardType.REVERSE));
-        cards.push(new ActionCard(color , CardType.REVERSE));
-        cards.push(new ActionCard(color , CardType.DRAW_TWO));
-        cards.push(new ActionCard(color , CardType.DRAW_TWO));
-        cards.push(new ActionCard(color , CardType.SKIP));
-        cards.push(new ActionCard(color , CardType.SKIP));
+        cards.push(new ActionCard(color, CardType.REVERSE));
+        cards.push(new ActionCard(color, CardType.REVERSE));
+        cards.push(new ActionCard(color, CardType.DRAW_TWO));
+        cards.push(new ActionCard(color, CardType.DRAW_TWO));
+        cards.push(new ActionCard(color, CardType.SKIP));
+        cards.push(new ActionCard(color, CardType.SKIP));
     }
 
     private void addWildCard() {
@@ -94,8 +95,8 @@ public class CardDeck {
     }
 
     private void resetDeckFromDiscarded() {
-        if(discardedCards.isEmpty()){
-            throw new IllegalArgumentException("Discarded cards pile is empty can't reset Deck");
+        if (discardedCards.isEmpty()) {
+            throw new IllegalArgumentException("Discarded cards pile is empty, can't reset Deck");
         }
         Card lastCard = discardedCards.pop();
         shuffle(discardedCards);
@@ -103,5 +104,4 @@ public class CardDeck {
         discardedCards.clear();
         discardedCards.push(lastCard);
     }
-
 }

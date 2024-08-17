@@ -2,6 +2,7 @@ package org.example.game;
 
 import org.example.card.*;
 import org.example.player.Player;
+import org.example.strategy.CardPlayStrategy;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,11 +21,18 @@ public class UnoGame extends Game {
     @Override
     protected void applyActionCard(ActionCard actionCard) {
         switch (actionCard.getCardType()) {
-            case REVERSE -> playerRound.reverseDirection();
-            case SKIP -> playerRound.next();
+            case REVERSE -> {
+                playerRound.reverseDirection();
+                System.out.println("Play direction reversed.");
+            }
+            case SKIP -> {
+                advanceToNextPlayer();
+                System.out.println("Player " + playerRound.getCurrentPlayer().getId() + " (" + playerRound.getCurrentPlayer().getName() + ") is skipped.");
+            }
             case DRAW_TWO -> {
-                playerRound.next();
+                advanceToNextPlayer();
                 Player nextPlayer = playerRound.getCurrentPlayer();
+                System.out.println("Player " + nextPlayer.getId() + " (" + nextPlayer.getName() + ") draws two cards.");
                 nextPlayer.addCardToHand(deck.drawCardFromDeck());
                 nextPlayer.addCardToHand(deck.drawCardFromDeck());
             }
@@ -35,22 +43,24 @@ public class UnoGame extends Game {
 
     @Override
     protected void applyWildCard(WildCard wildCard) {
-        CardColor chosenColor;
+        CardColor chosenColor = playerRound.getCurrentPlayer().getPlayerCards().chooseColorForWildCard();
+        System.out.println("Player " + playerRound.getCurrentPlayer().getId() + " (" + playerRound.getCurrentPlayer().getName() + ") changed the color to " + chosenColor);
         if (wildCard.getCardType() == CardType.WILD_DRAW_FOUR) {
-            playerRound.next();
+            advanceToNextPlayer();
             Player nextPlayer = playerRound.getCurrentPlayer();
+            System.out.println("Player " + nextPlayer.getId() + " (" + nextPlayer.getName() + ") draws four cards.");
             nextPlayer.addCardToHand(deck.drawCardFromDeck());
             nextPlayer.addCardToHand(deck.drawCardFromDeck());
             nextPlayer.addCardToHand(deck.drawCardFromDeck());
             nextPlayer.addCardToHand(deck.drawCardFromDeck());
-            playerRound.next();
         }
-        chosenColor = playerRound.getCurrentPlayer().getPlayerCards().chooseColorForWildCard();
         deck.setDeckColor(chosenColor);
     }
 
     @Override
     protected void handlePlayerTurn(Player player) {
+        System.out.println("Player " + player.getId() + " (" + player.getName() + ")'s turn.");
+
         Card topCard = deck.lastThrownCard();
         CardColor deckColor = deck.getDeckColor();
 
@@ -60,28 +70,18 @@ public class UnoGame extends Game {
             player.removeCardFromHand(playedCard.get());
             deck.discardCard(playedCard.get());
 
-            if (playedCard.get() instanceof ActionCard) {
-                applyActionCard((ActionCard) playedCard.get());
-                System.out.println("Player " + player.getId() + " (" + player.getName() + ") played " +
-                        playedCard.get().getCardColor() + " " + playedCard.get().getCardType());
-            } else if (playedCard.get() instanceof WildCard) {
-                applyWildCard((WildCard) playedCard.get());
-                System.out.println("Player " + player.getId() + " (" + player.getName() + ") played " +
-                        playedCard.get().getCardColor() + " " + playedCard.get().getCardType());
-            } else if (playedCard.get() instanceof NumberedCard) {
-                NumberedCard numberedCard = (NumberedCard) playedCard.get();
-                System.out.println("Player " + player.getId() + " (" + player.getName() + ") played " +
-                        numberedCard.getCardColor() + " " + numberedCard.getValue());
-            }
+            Card card = playedCard.get();
+            CardPlayStrategy strategy = cardStrategies.get(card.getClass());
+            strategy.playCard(this, player, card);
 
             if (playerWon(player)) {
-                System.out.println("Player " + player.getId() + " (" + player.getName() + ") has won");
+                System.out.println("Player " + player.getId() + " (" + player.getName() + ") has won the game!");
                 return;
             }
         } else {
+            System.out.println("Player " + player.getId() + " (" + player.getName() + ") cannot play and draws a card.");
             player.addCardToHand(deck.drawCardFromDeck());
         }
-
         advanceToNextPlayer();
     }
 
