@@ -6,12 +6,22 @@ import java.util.Stack;
 public class CardDeck {
     private Stack<Card> cards;
     private Stack<Card> discardedCards;
+    private CardColor deckColor;
 
     public CardDeck() {
         cards = new Stack<>();
         discardedCards = new Stack<>();
         initializeDeck();
         shuffle(cards);
+    }
+
+    public CardColor getDeckColor() {
+        return deckColor;
+    }
+
+    public void setDeckColor(CardColor deckColor) {
+        System.out.println("Deck color is set to " + deckColor);
+        this.deckColor = deckColor;
     }
 
     private void initializeDeck() {
@@ -67,6 +77,7 @@ public class CardDeck {
 
     public void discardCard(Card card) {
         discardedCards.push(card);
+        setDeckColor(card.getCardColor());
     }
 
     public Card lastThrownCard() {
