@@ -1,6 +1,7 @@
 package org.example.player;
 
 import org.example.card.Card;
+import org.example.card.CardColor;
 
 import java.util.Iterator;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class Player {
         playerCards.playCard(card);
     }
 
-    public Optional<Card> play(Card topCard) {
-        return playerCards.chooseCardToPlay(topCard);
+    public Optional<Card> getCardFromHand(Card topCard , CardColor cardColor) {
+        return playerCards.ChooseCardToPlay(topCard , cardColor);
     }
 }
