@@ -20,11 +20,11 @@ public class UnoGame extends Game {
     @Override
     protected void applyActionCard(ActionCard actionCard) {
         switch (actionCard.getCardType()) {
-            case REVERSE -> playerRound.reverse();
-            case SKIP -> playerRound.getNextPlayer();
+            case REVERSE -> playerRound.reverseDirection();
+            case SKIP -> playerRound.next();
             case DRAW_TWO -> {
-                playerRound.getNextPlayer();
-                Player nextPlayer = playerRound.getplayer();
+                playerRound.next();
+                Player nextPlayer = playerRound.getCurrentPlayer();
                 nextPlayer.addCardToHand(deck.drawCardFromDeck());
                 nextPlayer.addCardToHand(deck.drawCardFromDeck());
             }
@@ -37,15 +37,15 @@ public class UnoGame extends Game {
     protected void applyWildCard(WildCard wildCard) {
         CardColor chosenColor;
         if (wildCard.getCardType() == CardType.WILD_DRAW_FOUR) {
-            playerRound.getNextPlayer();
-            Player nextPlayer = playerRound.getplayer();
+            playerRound.next();
+            Player nextPlayer = playerRound.getCurrentPlayer();
             nextPlayer.addCardToHand(deck.drawCardFromDeck());
             nextPlayer.addCardToHand(deck.drawCardFromDeck());
             nextPlayer.addCardToHand(deck.drawCardFromDeck());
             nextPlayer.addCardToHand(deck.drawCardFromDeck());
-            playerRound.getNextPlayer();
+            playerRound.next();
         }
-        chosenColor = playerRound.getplayer().getPlayerCards().chooseColorForWildCard();
+        chosenColor = playerRound.getCurrentPlayer().getPlayerCards().chooseColorForWildCard();
         deck.setDeckColor(chosenColor);
     }
 
