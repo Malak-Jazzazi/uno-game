@@ -2,6 +2,7 @@ package org.example.player;
 
 import org.example.card.Card;
 
+import java.util.Iterator;
 import java.util.Optional;
 
 public class Player {
@@ -35,7 +36,7 @@ public class Player {
         playerCards.playCard(card);
     }
 
-    public Optional<Card> getCardFromHand(Card topCard) {
+    public Optional<Card> play(Card topCard) {
         return playerCards.chooseCardToPlay(topCard);
     }
 }
